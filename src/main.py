@@ -1,28 +1,62 @@
 """
-Command line runner for the Music Recommender Simulation.
+Command line runner for the Music Recommender.
 
-This file helps you quickly run and test your recommender.
+Classic mode (no args):
+    python src/main.py
 
-You will implement the functions in recommender.py:
-- load_songs
-- score_song
-- recommend_songs
+RAG mode (natural language query):
+    python src/main.py --query "something chill for late-night studying"
 """
+import sys
+from typing import Optional
 
 from recommender import load_songs, recommend_songs
 
 
 def main() -> None:
-    songs = load_songs("data/songs.csv") 
+    query = _parse_query()
+    if query:
+        _run_rag_mode(query)
+    else:
+        _run_classic_mode()
 
-    # Taste profile: upbeat pop listener who enjoys dancing and positivity
+
+def _parse_query() -> Optional[str]:
+    if "--query" in sys.argv:
+        idx = sys.argv.index("--query")
+        if idx + 1 < len(sys.argv):
+            return sys.argv[idx + 1]
+    return None
+
+
+def _run_rag_mode(query: str) -> None:
+    from rag_retriever import retrieve
+    from rag_recommender import generate_recommendations
+
+    print("\n" + "=" * 40)
+    print("  RAG MUSIC RECOMMENDATIONS")
+    print(f'  "{query}"')
+    print("=" * 40 + "\n")
+
+    print("Retrieving similar songs...")
+    retrieved = retrieve(query, k=5)
+
+    print("Generating recommendations with Claude...\n")
+    response = generate_recommendations(query, retrieved)
+    print(response)
+    print("\n" + "=" * 40)
+
+
+def _run_classic_mode() -> None:
+    songs = load_songs("data/songs.csv")
+
     user_prefs = {
         "genre": "pop",
         "mood": "happy",
-        "tempo_bpm": 120,      # comfortable around 120 BPM (dance-friendly)
-        "valence": 0.80,       # wants positive, feel-good songs
-        "danceability": 0.85,  # high danceability is a priority
-        "likes_acoustic": False # prefers produced/electronic sound over acoustic
+        "tempo_bpm": 120,
+        "valence": 0.80,
+        "danceability": 0.85,
+        "likes_acoustic": False,
     }
 
     recommendations = recommend_songs(user_prefs, songs, k=5)

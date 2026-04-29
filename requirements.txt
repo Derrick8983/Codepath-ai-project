@@ -1,3 +1,6 @@
 pandas
 pytest
 streamlit
+anthropic
+sentence-transformers
+numpy

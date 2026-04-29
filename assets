@@ -1,1 +1,61 @@
+┌─────────────────────────────────────────────────────────────────┐
+│                        SETUP (run once)                         │
+│                                                                 │
+│   data/songs.csv  ──►  rag_indexer.py  ──►  song_embeddings.npy│
+│   (17 songs)           (sentence-         + song_index.json    │
+│                         transformers)                           │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                        RUNTIME                                  │
+│                                                                 │
+│   USER INPUT                                                    │
+│      │                                                          │
+│      ├──── natural language query? ─────────────► RAG PATH     │
+│      │         e.g. "chill late-night study"                    │
+│      │                   │                                      │
+│      │         ┌─────────▼──────────┐                          │
+│      │         │  rag_retriever.py  │  ◄── song_embeddings.npy │
+│      │         │  (cosine similarity│                          │
+│      │         │   top-5 matches)   │                          │
+│      │         └─────────┬──────────┘                          │
+│      │                   │  top-5 songs + similarity scores    │
+│      │         ┌─────────▼──────────┐                          │
+│      │         │ rag_recommender.py │                          │
+│      │         │ Claude Opus 4.7    │  ◄── ANTHROPIC_API_KEY   │
+│      │         │ (adaptive thinking │                          │
+│      │         │  streaming output) │                          │
+│      │         └─────────┬──────────┘                          │
+│      │                   │                                      │
+│      │              ranked list +                               │
+│      │           natural language                               │
+│      │              explanations                                │
+│      │                                                          │
+│      └──── no query (classic mode) ──────────────► CLASSIC PATH│
+│                         │                                       │
+│               ┌─────────▼──────────┐                           │
+│               │   recommender.py   │                           │
+│               │  score_song()      │  genre +2, mood +1        │
+│               │  recommend_songs() │  max score 3.0            │
+│               └─────────┬──────────┘                           │
+│                         │                                       │
+│                    top-5 songs +                                │
+│                   numeric scores                                │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     TESTING / HUMAN REVIEW                      │
+│                                                                 │
+│   tests/test_recommender.py  (pytest)                           │
+│   ├── test_recommend_returns_songs_sorted_by_score()            │
+│   │       checks: pop/happy song ranks #1                       │
+│   └── test_explain_recommendation_returns_non_empty_string()    │
+│           checks: explanation is non-empty string               │
+│                                                                 │
+│   Human review:  reads Claude's output and judges quality       │
+│   (no automated eval for RAG path — human checks if             │
+│    explanations make sense for the query)                       │
+└─────────────────────────────────────────────────────────────────┘
 

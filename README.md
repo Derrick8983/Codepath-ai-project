@@ -264,3 +264,10 @@ A few sentences about what you learned:
 - How did building this change how you think about real music recommenders
 - Where do you think human judgment still matters, even if the model seems "smart"
 
+Refelction part 2 
+My music recommender has clear limitations because it only uses 17 songs. This small dataset creates bias, since the system can only recommend within a narrow set of options and may repeat similar results. It also does not account for changing preferences or broader music diversity.
+The system could be misused by reinforcing limited tastes or appearing more accurate than it actually is. To prevent this, it’s important to clearly communicate its limitations and expand the dataset over time.
+What surprised me was how inconsistent the recommendations could be. Small input changes sometimes led to very different results, showing the system is not very stable with such limited data.
+During development, AI helped by suggesting ways to structure the recommendation logic more clearly. However, it also gave suggestions that didn’t fit my dataset, which caused errors and had to be corrected manually. This showed that AI is useful, but its output still needs to be checked carefully.
+
+What this project says about me as an AI engineer. : This project shows that I approach AI engineering with a focus on building practical systems while understanding their limitations. I was able to design and implement a working recommender even with a very small dataset, and I paid attention to how data size affects performance and reliability. I also showed that I can use AI tools to support development while still verifying results and fixing issues when needed. Overall, it reflects my ability to build, analyze, and improve systems rather than just making something that works.
